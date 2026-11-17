@@ -25,6 +25,10 @@ Five tools are read-only and marked so (`readOnlyHint`). `add_expense` is the on
 - **Errors are short and safe.** An unreachable API, a refused token or a validation message from the API comes back as a tool error the agent can act on. Stack traces and response bodies are never passed through.
 - **stdio transport.** The client starts the server as a local process. stdout carries only protocol messages, and diagnostics go to stderr.
 
+## Used by the in-app assistant
+
+The Expense Tracker's chat page ("Ask") runs on this server too: the AI service (`AI/`, Python) starts it over stdio for each question and drives it as an MCP client, offering the model only the read-only tools. So the same tools serve Claude Code, Claude Desktop and the app's own agent.
+
 ## Setup
 
 Requires Node 22+ and a running Expense Tracker backend.
