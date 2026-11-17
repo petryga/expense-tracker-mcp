@@ -38,7 +38,7 @@ export const addExpenseInput = {
     .trim()
     .min(1)
     .max(100)
-    .describe('The card or account it was paid with, for example "Amex"'),
+    .describe('The card or account it was paid with, as named in the app, for example "Card"'),
 };
 
 export const registerAddExpense = (server: McpServer, api: ExpenseTrackerApi) => {
