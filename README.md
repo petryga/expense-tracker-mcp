@@ -6,14 +6,14 @@ A side project: a small server over my own API. It doesn't change the backend; i
 
 ## Tools
 
-| Tool              | What it does                                                                  | API                                              |
-| ----------------- | ----------------------------------------------------------------------------- | ------------------------------------------------ |
-| `list_categories` | Your categories, each with its group and monthly budget                       | `GET /categories`                                |
-| `monthly_summary` | Spent (and optionally income) per month, in CAD and USD separately            | `GET /monthlyData`                               |
-| `spending_report` | One month by category, biggest first; expense lines only if asked             | `GET /reports/monthly`                           |
-| `list_expenses`   | Individual expenses for a month and/or a text search, optionally one category | `GET /expenses`                                  |
-| `list_recurring`  | Recurring expenses and income, with monthly totals                            | `GET /recurringExpenses`, `GET /recurringIncome` |
-| `add_expense`     | **Writes:** adds one expense, after validating every field                    | `POST /expenses`                                 |
+| Tool              | What it does                                                                                                    | API                                              |
+| ----------------- | --------------------------------------------------------------------------------------------------------------- | ------------------------------------------------ |
+| `list_categories` | Your categories, each with its group and monthly budget                                                         | `GET /categories`                                |
+| `monthly_summary` | Spent (and optionally income) per month, in CAD and USD separately                                              | `GET /monthlyData`                               |
+| `spending_report` | One month by category, biggest first; expense lines only if asked                                               | `GET /reports/monthly`                           |
+| `list_expenses`   | Individual expenses for a month and/or a text search (description, merchant, category), optionally one category | `GET /expenses`                                  |
+| `list_recurring`  | Recurring expenses and income, with monthly totals                                                              | `GET /recurringExpenses`, `GET /recurringIncome` |
+| `add_expense`     | **Writes:** adds one expense, after validating every field                                                      | `POST /expenses`                                 |
 
 Five tools are read-only and marked so (`readOnlyHint`). `add_expense` is the only write: it can't change or delete anything, its description tells the agent to confirm with you first, and it checks every field before calling the API: a real date, an amount above 0 with at most two decimals, CAD or USD, and a category you already have.
 

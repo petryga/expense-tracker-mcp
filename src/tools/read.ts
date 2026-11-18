@@ -78,7 +78,8 @@ export const registerReadTools = (server: McpServer, api: ExpenseTrackerApi) => 
       description:
         'One month broken down by category, biggest first, with totals in CAD and USD ' +
         'separately. Gifts are reported as their own "Gifts" group. Set include_items to also ' +
-        'list the expenses in each category (description, amount, currency).',
+        'list the expenses in each category (description, amount, currency, and merchant ' +
+        'when the description does not name the shop, as for Amazon items).',
       inputSchema: {
         month: yearMonth.describe('The month, YYYY-MM'),
         include_items: z.boolean().default(false).describe('List the expenses in each category'),
@@ -102,6 +103,7 @@ export const registerReadTools = (server: McpServer, api: ExpenseTrackerApi) => 
             ? {
                 items: entry.details.map((d) => ({
                   description: d.description,
+                  ...(d.merchant ? { merchant: d.merchant } : {}),
                   amount: money(d.amount),
                   currency: d.currency,
                 })),
@@ -126,7 +128,9 @@ export const registerReadTools = (server: McpServer, api: ExpenseTrackerApi) => 
       title: 'List expenses',
       description:
         'Individual expenses, newest first: for one month, or matching a text search over ' +
-        'description and category (give month, search, or both). Optionally narrowed to one ' +
+        'description, merchant and category (give month, search, or both). Items bought on ' +
+        'Amazon are saved under their product names with merchant "Amazon", so search ' +
+        '"Amazon" to find them. Optionally narrowed to one ' +
         'category. Prefer spending_report or monthly_summary for totals.',
       inputSchema: {
         month: yearMonth.optional().describe('The month, YYYY-MM'),
@@ -136,7 +140,7 @@ export const registerReadTools = (server: McpServer, api: ExpenseTrackerApi) => 
           .min(2)
           .max(100)
           .optional()
-          .describe('Text to find in description or category'),
+          .describe('Text to find in description, merchant or category'),
         category: z.string().trim().min(1).max(100).optional().describe('Exact category name'),
         limit: z.number().int().min(1).max(200).default(50).describe('At most this many'),
       },
@@ -152,6 +156,7 @@ export const registerReadTools = (server: McpServer, api: ExpenseTrackerApi) => 
         expenses = expenses.filter(
           (e) =>
             e.description.toLowerCase().includes(needle) ||
+            (e.merchant ?? '').toLowerCase().includes(needle) ||
             e.category.toLowerCase().includes(needle),
         );
       }
@@ -163,6 +168,7 @@ export const registerReadTools = (server: McpServer, api: ExpenseTrackerApi) => 
         expenses: expenses.slice(0, limit).map((e) => ({
           date: e.datePosted.slice(0, 10),
           description: e.description,
+          ...(e.merchant ? { merchant: e.merchant } : {}),
           amount: money(e.amount),
           currency: e.currency,
           category: e.category,

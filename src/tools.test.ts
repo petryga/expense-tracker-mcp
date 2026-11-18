@@ -184,6 +184,23 @@ describe('tools', () => {
       });
     });
 
+    it('finds Amazon items, saved under product names, by their merchant', async () => {
+      const lamp = {
+        ...EXPENSES[0],
+        id: 'e-lamp',
+        description: 'Test Desk Lamp',
+        merchant: 'Amazon',
+        category: 'Home',
+      };
+      const client = await connect(
+        fakeFetch({ 'GET /expenses': () => ({ data: [...EXPENSES, lamp] }) }),
+      );
+      const result = await call(client, 'list_expenses', { month: '2026-10', search: 'amazon' });
+      expect(result.expenses).toEqual([
+        expect.objectContaining({ description: 'Test Desk Lamp', merchant: 'Amazon' }),
+      ]);
+    });
+
     it('narrows by search inside a month, by category, and by limit', async () => {
       const client = await connect(fetchFn());
       const searched = await call(client, 'list_expenses', { month: '2026-10', search: 'cafe' });

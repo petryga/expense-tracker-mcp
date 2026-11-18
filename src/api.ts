@@ -24,6 +24,9 @@ export interface Expense {
   category: string;
   account: string;
   isGift?: boolean;
+  // Where it was bought when the description doesn't say: "Amazon" for the
+  // items of a split Amazon charge, or a marketplace from the user's list.
+  merchant?: string | null;
 }
 
 export interface MonthlyTotals {
@@ -38,7 +41,7 @@ export interface MonthlyReport {
   dataByCategory: {
     category: string;
     total: number;
-    details: { description: string; amount: number; currency: string }[];
+    details: { description: string; amount: number; currency: string; merchant?: string }[];
   }[];
   totalSpentCad: number;
   totalSpentUsd: number;
